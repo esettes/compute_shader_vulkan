@@ -1,4 +1,4 @@
-SRCS = main.c compute.c
+SRCS = main.c compute.c device.c
 HEADERS = compute.h
 
 CC = gcc
