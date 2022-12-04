@@ -1,7 +1,7 @@
 /**
  * @ Author: Roxana Stancu (esettes)
  * @ Created: 22/12/03 02:48
- * @ Modified: 22/12/03 16:14
+ * @ Modified: 22/12/03 23:42
  * 
  * @ Description: Open a device and allocate execution queues from it.
  * 
@@ -17,11 +17,15 @@
  * than one, giving an identifier(physical device).
  */
 
+#include <string.h>
+#include <stdio.h>
 #include "device.h"
+#include "instance.h"
 
-uint32_t	g_compQueueFamilyIndex;
-VkDevice	g_logicalDevice = VK_NULL_HANDLE;
-VkQueue		g_compQueue = VK_NULL_HANDLE;
+uint32_t		g_comp_queue_family_index;
+VkDevice		g_logical_device = VK_NULL_HANDLE;
+VkQueue			g_compute_queue = VK_NULL_HANDLE;
+VkCommandPool	g_compute_command_pool = VK_NULL_HANDLE;
 
 void	create_device_and_compute_queue(void)
 {
@@ -29,42 +33,67 @@ void	create_device_and_compute_queue(void)
 	uint32_t				f_count = 100;
 
 	/* * * * * *		Get which queue we need			* * * * * */
-	vkGetPhysicalDeviceQueueFamilyProperties(physicalDevice, &f_count, families);
+	vkGetPhysicalDeviceQueueFamilyProperties(g_physical_device, &f_count,
+		families);
 	printf("Found %u queue families\n", f_count);
-	g_compQueueFamilyIndex = 0;
-	while ((g_compQueueFamilyIndex < f_count) &&
-		((families[g_compQueueFamilyIndex].queueFlags & VK_QUEUE_COMPUTE_BIT) == 0))
+	g_comp_queue_family_index = 0;
+	while ((g_comp_queue_family_index < f_count) 
+		&& ((families[g_comp_queue_family_index].queueFlags
+		& VK_QUEUE_COMPUTE_BIT) == 0))
 	{
-		g_compQueueFamilyIndex++;
+		g_comp_queue_family_index++;
 	}
 	/**
 	 * If the suitable queue family is not found, print error.
 	*/
-	if (g_compQueueFamilyIndex == f_count)
+	if (g_comp_queue_family_index == f_count)
 	{
-		printf("Compute que not found\n");
+		printf("Compute queue not found\n");
 	}
-
 	/* * * *	Open the device; create the logical device	* * * * * */
-	VkDeviceCreateInfo		deviceCreateInfo;
-	VkDeviceQueueCreateInfo	queueCreateInfo;
+	VkDeviceCreateInfo		device_create_info;
+	VkDeviceQueueCreateInfo	queue_create_info;
 	float					prior = 1.0f;
 
-	memset(&queueCreateInfo, 0, sizeof(queueCreateInfo));
-	queueCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
-	queueCreateInfo.queueFamilyIndex = g_compQueueFamilyIndex;
-	queueCreateInfo.queueCount = 1;
-	queueCreateInfo.pQueuePriorities = &prior;
-	memset(&deviceCreateInfo, 0, sizeof(deviceCreateInfo));
-	deviceCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
-	deviceCreateInfo.pQueueCreateInfos = &queueCreateInfo;
-	deviceCreateInfo.queueCreateInfoCount = 1;
-	if (vkCreateDevice(physicalDevice, &deviceCreateInfo, NULL, &g_logicalDevice)
-		!= VK_SUCCESS)
+	memset(&queue_create_info, 0, sizeof(queue_create_info));
+	queue_create_info.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
+	queue_create_info.queueFamilyIndex = g_comp_queue_family_index;
+	queue_create_info.queueCount = 1;
+	queue_create_info.pQueuePriorities = &prior;
+	memset(&device_create_info, 0, sizeof(device_create_info));
+	device_create_info.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
+	device_create_info.pQueueCreateInfos = &queue_create_info;
+	device_create_info.queueCreateInfoCount = 1;
+	if (vkCreateDevice(g_physical_device, &device_create_info, NULL,
+		&g_logical_device) != VK_SUCCESS)
 	{
 		printf("Logical device creation failure\n");
 		return ;
 	}
 	/* * * *	Get the compute queue handle	* * * * * */
-	vkGetDeviceQueue(g_logicalDevice, g_compQueueFamilyIndex, 0, &g_compQueue);
+	vkGetDeviceQueue(g_logical_device, g_comp_queue_family_index, 0,
+		&g_compute_queue);
+}
+
+void	create_command_pool(void)
+{
+	VkCommandPoolCreateInfo		cmd_pool_create_info;
+
+	memset(&cmd_pool_create_info, 0, sizeof(cmd_pool_create_info));
+	cmd_pool_create_info.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
+	cmd_pool_create_info.queueFamilyIndex = g_comp_queue_family_index;
+	if (vkCreateCommandPool(g_logical_device, &cmd_pool_create_info, NULL,
+		&g_compute_command_pool) != VK_SUCCESS)
+	{
+		printf("Command pool creation failure\n");
+		return ;
+	}
+}
+
+void	destroy_commandpool_logicaldevice(void)
+{
+	if (g_compute_command_pool != VK_NULL_HANDLE)
+		vkDestroyCommandPool(g_logical_device, g_compute_command_pool, NULL);
+	if (g_logical_device != VK_NULL_HANDLE)
+		vkDestroyDevice(g_logical_device, NULL);
 }
