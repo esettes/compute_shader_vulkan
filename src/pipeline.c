@@ -1,7 +1,7 @@
 /**
  * @ Author: Roxana Stancu (esettes)
  * @ Created: 2022/12/04 01:38
- * @ Modified: 2022/12/04 03:12
+ * @ Modified: 2022/12/04 12:39
  * @ Description:
  */
 
@@ -12,6 +12,7 @@
 
 VkPipeline g_pipeline = VK_NULL_HANDLE;
 
+#if 0
 void	create_pipeline(void)
 {
 	VkComputePipelineCreateInfo pipeline_info;
@@ -27,3 +28,4 @@ void	create_pipeline(void)
 		return ;
 	}
 }
+#endif

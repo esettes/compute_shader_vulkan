@@ -1,7 +1,7 @@
 /**
  * @ Author: Roxana Stancu (esettes)
  * @ Created: 2022/12/02 23:41
- * @ Modified: 2022/12/04 03:12
+ * @ Modified: 2022/12/04 12:40
  * 
  * @ Description: commandPool means where to allocate the command buffer, 
  * which aren't allocated individually.
@@ -55,8 +55,8 @@ void	set_command_buffer(void)
 		printf("Buffer begining failed\n");
 		return ;
 	}
-	vkCmdBindPipeline(g_command_buffer, VK_PIPELINE_BIND_POINT_COMPUTE,
-		g_pipeline);
+	//vkCmdBindPipeline(g_command_buffer, VK_PIPELINE_BIND_POINT_COMPUTE,
+	//	g_pipeline);
 	vkCmdDispatch(g_command_buffer, 1, 1, 1);
 	/**
 	 * End recording
