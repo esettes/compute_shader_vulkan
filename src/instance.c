@@ -1,7 +1,7 @@
 /**
  * @ Author: Roxana Stancu (esettes)
  * @ Created: 22/12/03 16:29
- * @ Modified: 22/12/04 00:25
+ * @ Modified: 22/12/04 01:52
  * 
  * @ Description:
  * 
@@ -10,11 +10,6 @@
  * decives to NULL.
  * 
  * This way, it will return the number of devices in the system.
- * then we can allocate memory for the devices.
- * and call vkEnumeratePhysicalDevices again.
- * Later on, we can use the same function to get the properties of the devices.
- * So we can use the same function to get the number of devices and the properties
- * for each device.
  */
 
 #include "instance.h"
@@ -30,22 +25,24 @@ void	get_physical_device()
 {
 	VkPhysicalDevice			devices[100];
 	VkPhysicalDeviceProperties	properties;
+	VkPhysicalDeviceFeatures	features;
 	uint32_t					count = 100;
 
 	if (vkEnumeratePhysicalDevices(g_instance, &count, devices) != VK_SUCCESS)
 	{
-		
-		printf("Physical devices enumeration failure.\n");
+		printf("[ERROR] Physical devices enumeration failure.\n");
 		return ;
 	}
 	g_physical_device = devices[0];
 	vkGetPhysicalDeviceProperties(devices[0], &properties);
 	vkGetPhysicalDeviceProperties(devices[1], &properties);
+	vkGetPhysicalDeviceFeatures(devices[0], &features);
+	vkGetPhysicalDeviceFeatures(devices[1], &features);
 }
 
 void	create_instance(void)
 {
-	/* const char				*layers[] = { "VK_LAYER_KHRONOS_validation" };*/
+	/* const char			*layers[] = { "VK_LAYER_KHRONOS_validation" };*/
 	VkInstanceCreateInfo	instance_info;
 
 	memset(&instance_info, 0, sizeof(instance_info));
@@ -64,22 +61,23 @@ void	create_instance(void)
 	#endif
 	if (vkCreateInstance(&instance_info, NULL, &g_instance) != VK_SUCCESS)
 	{
-		printf("Instance not created.\n");
+		printf("[ERROR] Instance not created.\n");
 		return ;
 	}
 }
 
 int	check_validation_layer_support(void)
 {
-	uint32_t	layer_count;
-	vkEnumerateInstanceLayerProperties(&layer_count, NULL);
+	uint32_t			layer_count;
 	VkLayerProperties	avaible_layers[layer_count];
+
+	vkEnumerateInstanceLayerProperties(&layer_count, NULL);
 	vkEnumerateInstanceLayerProperties(&layer_count, avaible_layers);
-	
 	for (uint32_t i = 0; i < layer_count; i++)
 	{
 		printf("Avaible layer: %s\n", avaible_layers[i].layerName);
-		if (strcmp("VK_LAYER_KHRONOS_validation", avaible_layers[i].layerName) == 0)
+		if (strcmp("VK_LAYER_KHRONOS_validation", avaible_layers[i].layerName)
+			== 0)
 		{
 			return (0);
 		}

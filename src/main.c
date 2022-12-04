@@ -1,9 +1,7 @@
 /**
  * @ Author: Roxana Stancu (esettes)
  * @ Created: 22/12/02 23:40
- * @ Modified: 22/12/03 18:35
- * 
- * @ Description: main file
+ * @ Modified: 22/12/04 01:48
  */
 
 #include "compute.h"

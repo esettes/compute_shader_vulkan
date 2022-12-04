@@ -1,7 +1,7 @@
 /**
  * @ Author: Roxana Stancu (esettes)
  * @ Created: 22/12/03 02:48
- * @ Modified: 22/12/03 23:42
+ * @ Modified: 22/12/04 01:52
  * 
  * @ Description: Open a device and allocate execution queues from it.
  * 
@@ -48,7 +48,7 @@ void	create_device_and_compute_queue(void)
 	*/
 	if (g_comp_queue_family_index == f_count)
 	{
-		printf("Compute queue not found\n");
+		printf("[ERROR] Compute queue not found\n");
 	}
 	/* * * *	Open the device; create the logical device	* * * * * */
 	VkDeviceCreateInfo		device_create_info;
@@ -67,7 +67,7 @@ void	create_device_and_compute_queue(void)
 	if (vkCreateDevice(g_physical_device, &device_create_info, NULL,
 		&g_logical_device) != VK_SUCCESS)
 	{
-		printf("Logical device creation failure\n");
+		printf("[ERROR] Logical device creation failure\n");
 		return ;
 	}
 	/* * * *	Get the compute queue handle	* * * * * */
@@ -85,7 +85,7 @@ void	create_command_pool(void)
 	if (vkCreateCommandPool(g_logical_device, &cmd_pool_create_info, NULL,
 		&g_compute_command_pool) != VK_SUCCESS)
 	{
-		printf("Command pool creation failure\n");
+		printf("[ERROR] Command pool creation failure\n");
 		return ;
 	}
 }

@@ -1,7 +1,7 @@
 /**
  * @ Author: Roxana Stancu (esettes)
  * @ Created: 22/12/02 23:41
- * @ Modified: 22/12/03 23:07
+ * @ Modified: 22/12/04 02:32
  * 
  * @ Description: commandPool means where to allocate the command buffer, 
  * which aren't allocated individually.
@@ -39,7 +39,7 @@ void	set_command_buffer(void)
 	if (vkAllocateCommandBuffers(g_logical_device, &alloc_info, &g_command_buffer)
 		!= VK_SUCCESS)
 	{
-		printf("Command buffer allocation failed\n");
+		printf("[ERROR] Command buffer allocation failed\n");
 		return ;
 	}
 	/**
@@ -55,13 +55,15 @@ void	set_command_buffer(void)
 		printf("Buffer begining failed\n");
 		return ;
 	}
+	//vkCmdBindPipeline(g_command_buffer, VK_PIPELINE_BIND_POINT_COMPUTE,
+	//	g_pipeline);
 	vkCmdDispatch(g_command_buffer, 1, 1, 1);
 	/**
 	 * End recording
 	 */
 	if (vkEndCommandBuffer(g_command_buffer) != VK_SUCCESS)
 	{
-		printf("Buffer ending failed\n");
+		printf("[ERROR] Buffer ending failed\n");
 		return ;
 	}
 }
@@ -78,7 +80,7 @@ int	compute(void)
 	submit_info.pCommandBuffers = &g_command_buffer;
 	if (vkQueueSubmit(g_compute_queue, 1, &submit_info, NULL) != VK_SUCCESS)
 	{
-		printf("Command buffer submission failed\n");
+		printf("[ERROR] Command buffer submission failed\n");
 		return (-1);
 		#if TEMP_DISABLED
 		#endif
