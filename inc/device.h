@@ -1,8 +1,7 @@
 /**
  * @ Author: Roxana Stancu (esettes)
- * @ Created: 22/12/03 02:48
- * @ Modified: 22/12/03 23:01
- * @ Description:
+ * @ Created: 2022/12/03 02:48
+ * @ Modified: 2022/12/04 03:13
  */
 
 # ifndef DEVICE_H

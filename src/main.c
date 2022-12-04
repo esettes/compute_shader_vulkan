@@ -1,7 +1,7 @@
 /**
  * @ Author: Roxana Stancu (esettes)
- * @ Created: 22/12/02 23:40
- * @ Modified: 22/12/04 01:48
+ * @ Created: 2022/12/02 23:40
+ * @ Modified: 2022/12/04 03:10
  */
 
 #include "compute.h"
@@ -19,5 +19,6 @@ int	main(int argc, char **argv)
 	destroy_commandpool_logicaldevice();
 	(void)argv;
 	(void)argc;
+	
 	return (0);
 }
