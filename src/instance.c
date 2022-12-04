@@ -1,10 +1,10 @@
 /**
  * @ Author: Roxana Stancu (esettes)
  * @ Created: 2022/12/03 16:29
- * @ Modified: 2022/12/04 03:12
+ * @ Modified: 2022/12/04 14:15
  * 
- * @ Description:
- * 
+ * @ Description: Obtain the physical device.
+ *
  * Enumerate all GPU's in the system.
  * vkEnumeratePhysicalDevices can be optimized too setting count to zero and
  * decives to NULL.

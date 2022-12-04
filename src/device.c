@@ -1,9 +1,10 @@
 /**
  * @ Author: Roxana Stancu (esettes)
  * @ Created: 2022/12/03 02:48
- * @ Modified: 2022/12/04 03:12
+ * @ Modified: 2022/12/04 14:16
  * 
- * @ Description: Open a device and allocate execution queues from it.
+ * @ Description: Open a device, create logical device and allocate execution
+ * queues from it.
  * 
  * A Logical Device is a handle to an opened GPU. When we want
  * to open a GPU, we need to know what queues we're going to use.

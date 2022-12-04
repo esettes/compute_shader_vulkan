@@ -1,9 +1,11 @@
 /**
  * @ Author: Roxana Stancu (esettes)
  * @ Created: 2022/12/02 23:41
- * @ Modified: 2022/12/04 12:40
+ * @ Modified: 2022/12/04 17:25
  * 
- * @ Description: commandPool means where to allocate the command buffer, 
+ * @ Description: Alloc command buffer in command pool and submit queue.
+ * 
+ * commandPool means where to allocate the command buffer, 
  * which aren't allocated individually.
  * 
  * VkCommandBufferBeginInfo records operations that want to be executed.
@@ -27,7 +29,10 @@
 
 VkCommandBuffer g_command_buffer = VK_NULL_HANDLE;
 
-void	set_command_buffer(void)
+/**
+ * Alloc command buffer and record dispatch.
+ */
+void	create_command_buffer(void)
 {
 	VkCommandBufferAllocateInfo alloc_info;
 
@@ -55,12 +60,10 @@ void	set_command_buffer(void)
 		printf("Buffer begining failed\n");
 		return ;
 	}
-	//vkCmdBindPipeline(g_command_buffer, VK_PIPELINE_BIND_POINT_COMPUTE,
-	//	g_pipeline);
+	vkCmdBindPipeline(g_command_buffer, VK_PIPELINE_BIND_POINT_COMPUTE,
+		g_pipeline);
 	vkCmdDispatch(g_command_buffer, 1, 1, 1);
-	/**
-	 * End recording
-	 */
+	/* End recording */
 	if (vkEndCommandBuffer(g_command_buffer) != VK_SUCCESS)
 	{
 		printf("[ERROR] Buffer ending failed\n");
@@ -68,24 +71,40 @@ void	set_command_buffer(void)
 	}
 }
 
+/**
+ * Submits command buffer to queue.
+ * 
+ * @return 0 if success, else failed.
+ */
 int	compute(void)
 {
-	VkSubmitInfo submit_info;
+	VkFence				fence;
+	VkFenceCreateInfo	fence_info;
+	VkSubmitInfo		submit_info;
 
+	memset(&fence_info, 0, sizeof(fence_info));
+	fence_info.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
+	if (vkCreateFence(g_logical_device, &fence_info, NULL, &fence) != VK_SUCCESS)
+	{
+		printf("[ERROR] Can't create fence.\n");
+		//return (0);
+		return (-1);
+	}
 	memset(&submit_info, 0, sizeof(submit_info));
 	submit_info.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
-	/**
-	 * Array of command buffers handles
-	 */
+	/* Array of command buffers handles. Sync tool with fence. */
 	submit_info.pCommandBuffers = &g_command_buffer;
-	if (vkQueueSubmit(g_compute_queue, 1, &submit_info, NULL) != VK_SUCCESS)
+	if (vkQueueSubmit(g_compute_queue, 1, &submit_info, fence) != VK_SUCCESS)
 	{
 		printf("[ERROR] Command buffer submission failed\n");
 		return (-1);
 		#if TEMP_DISABLED
 		#endif
 	}
-	
-
+	if (vkWaitForFences(g_logical_device, 1, &fence, VK_TRUE, UINT64_MAX) != VK_SUCCESS)
+	{
+		printf("[ERROR] Waiting for fence failed.\n");
+	}
+	vkDestroyFence(g_logical_device, fence, NULL);
 	return (0);
 }

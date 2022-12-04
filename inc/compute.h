@@ -1,7 +1,7 @@
 /**
  * @ Author: Roxana Stancu
  * @ Created: 2022/12/02 23:42
- * @ Modified: 2022/12/04 03:10
+ * @ Modified: 2022/12/04 17:23
  */
 
 # ifndef COMPUTE_H
@@ -10,13 +10,9 @@
 #include <vulkan/vulkan.h>
 #include <string.h>
 #include "device.h"
-/**
- * Submits command buffer to queue.
- */
+#include "pipeline.h"
+
 int		compute(void);
-/**
- * Alloc command buffer and record dispatch.
- */
-void	set_command_buffer(void);
+void	create_command_buffer(void);
 
 # endif
