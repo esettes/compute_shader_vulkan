@@ -1,7 +1,7 @@
 /**
  * @ Author: Roxana Stancu (esettes)
  * @ Created: 2022/12/04 01:38
- * @ Modified: 2022/12/04 17:30
+ * @ Modified: 2022/12/04 18:01
  * 
  * @ Description: Defining process of shader execution.
  */
@@ -13,7 +13,7 @@
 
 VkPipeline				g_pipeline = VK_NULL_HANDLE;
 VkPipelineLayout		g_pipeline_layout = VK_NULL_HANDLE;
-VkDescriptorSetLayout	descriptor_set_layout = VK_NULL_HANDLE;
+VkDescriptorSetLayout	g_descriptor_set_layout = VK_NULL_HANDLE;
 
 VkShaderModule create_compute_shader(void)
 {
@@ -48,7 +48,8 @@ VkShaderModule create_compute_shader(void)
 	return (handle);
 }
 /**
- * It was configurated with the number of bindings in the shader.
+ * Descriptor shoud be bound to the shader and it was configurated with 
+ * the number of bindings in the shader.
  */
 void	create_descriptor_set_layout(void)
 {
@@ -56,14 +57,20 @@ void	create_descriptor_set_layout(void)
 	VkDescriptorSetLayoutCreateInfo	create_info;
 
 	memset(&layout_bindings, 0, sizeof(layout_bindings));
-	bindin
+	layout_bindings[0].binding = 0;
+	layout_bindings[0].stageFlags = VK_SHADER_STAGE_COMPUTE_BIT;
+	layout_bindings[0].descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
+	layout_bindings[0].descriptorCount = 1;
+	layout_bindings[1].binding = 1;
+	layout_bindings[1].stageFlags = VK_SHADER_STAGE_COMPUTE_BIT;
+	layout_bindings[1].descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
+	layout_bindings[1].descriptorCount = 1;
 	memset(&create_info, 0, sizeof(create_info));
 	create_info.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
-	
 	create_info.bindingCount = 2;
-	create_
+	create_info.pBindings = layout_bindings;
 	if (vkCreateDescriptorSetLayout(g_logical_device, &create_info, NULL,
-		&descriptor_set_layout) != VK_SUCCESS)
+		&g_descriptor_set_layout) != VK_SUCCESS)
 	{
 		printf("[Error] Can't create descriptor set layout.\n");
 		return ;
@@ -82,7 +89,7 @@ void	create_pipeline_layout(void)
 	memset(&layout_info, 0, sizeof(layout_info));
 	layout_info.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
 	/* Define x, y, z buffer of glsl */
-	layout_info.pSetLayouts = &descriptor_set_layout;
+	layout_info.pSetLayouts = &g_descriptor_set_layout;
 	layout_info.setLayoutCount = 1;
 	if (vkCreatePipelineLayout(g_logical_device, &layout_info, NULL,
 		&g_pipeline_layout) != VK_SUCCESS)
@@ -118,7 +125,7 @@ void	create_pipeline(void)
 	}
 }
 /**
- * Destroys the pipeline and pipeline layout.
+ * Destroys the pipeline,descriptor set layout and pipeline layout.
  */
 void	destroy_pipeline(void)
 {
@@ -126,6 +133,11 @@ void	destroy_pipeline(void)
 	{
 		vkDestroyPipelineLayout(g_logical_device, g_pipeline_layout, NULL);
 		/*g_pipeline_layout = VK_NULL_HANDLE;*/
+	}
+	if (g_descriptor_set_layout != VK_NULL_HANDLE)
+	{
+		vkDestroyDescriptorSetLayout(g_logical_device, g_descriptor_set_layout, NULL);
+		/*g_descriptor_set_layout = VK_NULL_HANDLE;*/
 	}
 	if (g_pipeline != VK_NULL_HANDLE)
 	{

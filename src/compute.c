@@ -1,7 +1,7 @@
 /**
  * @ Author: Roxana Stancu (esettes)
  * @ Created: 2022/12/02 23:41
- * @ Modified: 2022/12/04 17:25
+ * @ Modified: 2022/12/05 01:56
  * 
  * @ Description: Alloc command buffer in command pool and submit queue.
  * 
@@ -27,8 +27,8 @@
 #include <string.h>
 #include <stdio.h>
 
-VkCommandBuffer g_command_buffer = VK_NULL_HANDLE;
-
+VkCommandBuffer	g_command_buffer = VK_NULL_HANDLE;
+VkDescriptorSet	g_descriptor_set = VK_NULL_HANDLE;
 /**
  * Alloc command buffer and record dispatch.
  */
@@ -62,6 +62,10 @@ void	create_command_buffer(void)
 	}
 	vkCmdBindPipeline(g_command_buffer, VK_PIPELINE_BIND_POINT_COMPUTE,
 		g_pipeline);
+	/* This func expects an array of descriptor sets, it should be the index of
+	the first. */
+	vkCmdBindDescriptorSets(g_command_buffer, VK_PIPELINE_BIND_POINT_COMPUTE,
+		g_pipeline_layout, 0, 1, &g_descriptor_set, 0, NULL);
 	vkCmdDispatch(g_command_buffer, 1, 1, 1);
 	/* End recording */
 	if (vkEndCommandBuffer(g_command_buffer) != VK_SUCCESS)
@@ -105,6 +109,27 @@ int	compute(void)
 	{
 		printf("[ERROR] Waiting for fence failed.\n");
 	}
+	else
+	{
+		printf("[INFO] Waiting for fence success.\n");
+	}
 	vkDestroyFence(g_logical_device, fence, NULL);
 	return (0);
+}
+
+void	create_descriptor_set(void)
+{
+	VkDescriptorSetAllocateInfo alloc_info;
+
+	memset(&alloc_info, 0, sizeof(alloc_info));
+	alloc_info.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
+	/* Number of descripto set layouts. */
+	alloc_info.descriptorSetCount = 1;
+	alloc_info.pSetLayouts = &g_descriptor_set_layout;
+	alloc_info.descriptorPool =
+	if (vkAllocateDescriptorSets(g_logical_device, &g_descriptor_set_alloc_info,
+		&g_descriptor_set) != VK_SUCCESS)
+	{
+		printf("[ERROR] Can't allocate descriptor set.\n");
+	}
 }
