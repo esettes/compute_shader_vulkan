@@ -1,7 +1,7 @@
 /**
  * @ Author: Roxana Stancu (esettes)
  * @ Created: 2022/12/06 14:20
- * @ Modified: 2022/12/06 19:57
+ * @ Modified: 2022/12/06 20:31
  * 
  * @ Description: Alloc memory in the GPU.
  */
@@ -45,7 +45,7 @@ VkBuffer	create_and_alloc_buffer(uint32_t size, VkDeviceMemory *device_mem)
 	 */
 	VkMemoryRequirements	mem_requirements;
 	/* gives required size of the mem block and allows mem types for buffer */
-	vkgetbuffermemoryrequirements(g_logical_device, buffer, &mem_requirements);
+	vkGetBufferMemoryRequirements(g_logical_device, buffer, &mem_requirements);
 	
 	VkMemoryAllocateInfo alloc_info;
 	
@@ -71,6 +71,8 @@ VkBuffer	create_and_alloc_buffer(uint32_t size, VkDeviceMemory *device_mem)
 		vkFreeMemory(g_logical_device, buffer_mem, NULL);
 		return (VK_NULL_HANDLE);
 	}
+	*device_mem = buffer_mem;
+	return (buffer);
 }
 /**
  * Buffer handle and memory region.
@@ -86,7 +88,6 @@ void	create_buffers(uint32_t in_size, uint32_t out_size)
 
 	/** Input - output info of descriptor set */
 	VkDescriptorBufferInfo descriptor_buff_info[2];
-	memset(descriptor_buff_info, 0, sizeof(descriptor_buff_info));
 	descriptor_buff_info[0].buffer = g_in_buffer;
 	descriptor_buff_info[0].offset = 0;
 	descriptor_buff_info[0].range = in_size; /**< want to use as much space as

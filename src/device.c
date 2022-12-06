@@ -1,7 +1,7 @@
 /**
  * @ Author: Roxana Stancu (esettes)
  * @ Created: 2022/12/03 02:48
- * @ Modified: 2022/12/06 19:58
+ * @ Modified: 2022/12/06 20:41
  * 
  * @ Description: Open a device, create logical device and allocate execution
  * queues from it.
@@ -111,7 +111,13 @@ void	create_descriptor_pool(void)
 	create_info.maxSets = 1;
 	/* How many descriptors are going to be allocated from the pool */
 	create_info.pPoolSizes = &pool_sizes;
-	
+	create_info.poolSizeCount = 1;
+	if (vkCreateDescriptorPool(g_logical_device, &create_info, NULL,
+		&g_descriptor_pool) != VK_SUCCESS)
+	{
+		printf("[ERROR] Can't create descriptor pool.\n");
+		return ;
+	}
 	
 }
 

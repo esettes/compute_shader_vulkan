@@ -1,7 +1,7 @@
 /**
  * @ Author: Roxana Stancu (esettes)
  * @ Created: 2022/12/02 23:41
- * @ Modified: 2022/12/06 17:38
+ * @ Modified: 2022/12/06 20:38
  * 
  * @ Description: Alloc command buffer in command pool and submit queue. Create
  * descriptor set for buffers.

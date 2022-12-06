@@ -1,7 +1,7 @@
 /**
  * @ Author: Roxana Stancu (esettes)
  * @ Created: 2022/12/02 23:40
- * @ Modified: 2022/12/06 18:51
+ * @ Modified: 2022/12/06 20:02
  */
 
 #include "compute.h"
@@ -11,8 +11,8 @@
 #include "memory.h"
 
 /* Buffers mirrors */
-uint32_t	g_in_buffer[1000];
-float		g_out_buffer[1000];
+uint32_t	g_in_data[1000];
+float		g_out_data[1000];
 
 int	main(int argc, char **argv)
 {
@@ -21,7 +21,7 @@ int	main(int argc, char **argv)
 	create_device_and_compute_queue();
 	create_pipeline();
 	create_descriptor_set();
-	create_buffer(sizeof(g_in_buffer), sizeof(g_out_buffer));
+	create_buffers(sizeof(g_in_data), sizeof(g_out_data));
 	create_command_pool();
 	create_command_buffer();
 	compute();
