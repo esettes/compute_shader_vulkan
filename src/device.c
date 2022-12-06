@@ -1,7 +1,7 @@
 /**
  * @ Author: Roxana Stancu (esettes)
  * @ Created: 2022/12/03 02:48
- * @ Modified: 2022/12/04 14:16
+ * @ Modified: 2022/12/06 14:16
  * 
  * @ Description: Open a device, create logical device and allocate execution
  * queues from it.
@@ -16,6 +16,9 @@
  * vkGetPhysicalDeviceQueueFamilyProperties fills buffer data with queue 
  * families data of a GPU. Indicate in param which of GPU use, if exist more
  * than one, giving an identifier(physical device).
+ * 
+ * A command pool represents a set of command buffers which will be used in a 
+ * particular thread
  */
 
 #include <string.h>
@@ -23,10 +26,11 @@
 #include "device.h"
 #include "instance.h"
 
-uint32_t		g_comp_queue_family_index;
-VkDevice		g_logical_device = VK_NULL_HANDLE;
-VkQueue			g_compute_queue = VK_NULL_HANDLE;
-VkCommandPool	g_compute_command_pool = VK_NULL_HANDLE;
+uint32_t			g_comp_queue_family_index;
+VkDevice			g_logical_device = VK_NULL_HANDLE;
+VkQueue				g_compute_queue = VK_NULL_HANDLE;
+VkCommandPool		g_compute_command_pool = VK_NULL_HANDLE;
+VkDescriptorPool	g_descriptor_pool = VK_NULL_HANDLE;
 
 void	create_device_and_compute_queue(void)
 {
@@ -75,7 +79,9 @@ void	create_device_and_compute_queue(void)
 	vkGetDeviceQueue(g_logical_device, g_comp_queue_family_index, 0,
 		&g_compute_queue);
 }
-
+/**
+ * Memory allocator for command buffers, which will be bind to descriptor set.
+*/
 void	create_command_pool(void)
 {
 	VkCommandPoolCreateInfo		cmd_pool_create_info;
@@ -91,10 +97,29 @@ void	create_command_pool(void)
 	}
 }
 
+void	create_descriptor_pool(void)
+{
+	VkDescriptorPoolSize		pool_sizes;
+	VkDescriptorPoolCreateInfo	create_info;
+	
+	memset(&pool_sizes, 0, sizeof(pool_sizes));
+	pool_sizes.type = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
+	pool_sizes.descriptorCount = 2;
+	memset(&create_info, 0, sizeof(create_info));
+	create_info.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
+	create_info.maxSets = 1;
+	/* How many descriptors are going to be allocated from the pool */
+	create_info.pPoolSizes = &pool_sizes;
+	
+	
+}
+
 void	destroy_commandpool_logicaldevice(void)
 {
 	if (g_compute_command_pool != VK_NULL_HANDLE)
 		vkDestroyCommandPool(g_logical_device, g_compute_command_pool, NULL);
+	if (g_descriptor_pool != VK_NULL_HANDLE)
+		vkDestroyDescriptorPool(g_logical_device, g_descriptor_pool, NULL);
 	if (g_logical_device != VK_NULL_HANDLE)
 		vkDestroyDevice(g_logical_device, NULL);
 }

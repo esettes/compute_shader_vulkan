@@ -1,9 +1,10 @@
 /**
  * @ Author: Roxana Stancu (esettes)
  * @ Created: 2022/12/02 23:41
- * @ Modified: 2022/12/05 01:56
+ * @ Modified: 2022/12/06 14:21
  * 
- * @ Description: Alloc command buffer in command pool and submit queue.
+ * @ Description: Alloc command buffer in command pool and submit queue. Create
+ * descriptor set for buffers.
  * 
  * commandPool means where to allocate the command buffer, 
  * which aren't allocated individually.
@@ -119,15 +120,16 @@ int	compute(void)
 
 void	create_descriptor_set(void)
 {
+	create_descriptor_pool();
 	VkDescriptorSetAllocateInfo alloc_info;
 
 	memset(&alloc_info, 0, sizeof(alloc_info));
 	alloc_info.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
-	/* Number of descripto set layouts. */
+	/* Number of descriptor set layouts. */
 	alloc_info.descriptorSetCount = 1;
 	alloc_info.pSetLayouts = &g_descriptor_set_layout;
-	alloc_info.descriptorPool =
-	if (vkAllocateDescriptorSets(g_logical_device, &g_descriptor_set_alloc_info,
+	alloc_info.descriptorPool = g_descriptor_pool;
+	if (vkAllocateDescriptorSets(g_logical_device, &alloc_info,
 		&g_descriptor_set) != VK_SUCCESS)
 	{
 		printf("[ERROR] Can't allocate descriptor set.\n");

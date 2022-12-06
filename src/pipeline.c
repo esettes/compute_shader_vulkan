@@ -1,9 +1,14 @@
 /**
  * @ Author: Roxana Stancu (esettes)
  * @ Created: 2022/12/04 01:38
- * @ Modified: 2022/12/04 18:01
+ * @ Modified: 2022/12/06 14:18
  * 
- * @ Description: Defining process of shader execution.
+ * @ Description: Defining process of shader execution. Create pipeline; shader
+ * and layout handles
+ * 
+ * Allocated data buffers must be bound to a descriptor set and
+ * the ds must be bound to the command buffer. This way Vulkan
+ * can give the memory to the shader.
  */
 
 #include "device.h"
@@ -38,7 +43,8 @@ VkShaderModule create_compute_shader(void)
 	create_info.codeSize = size;
 	create_info.pCode = (uint32_t*)shader_data;
 	
-	VkShaderModule handle;
+	VkShaderModule	handle;
+
 	if (vkCreateShaderModule(g_logical_device, &create_info, NULL, &handle)
 		!= VK_SUCCESS)
 	{
@@ -48,12 +54,13 @@ VkShaderModule create_compute_shader(void)
 	return (handle);
 }
 /**
+ * Specifies the types of buffers used by the shader/s.
  * Descriptor shoud be bound to the shader and it was configurated with 
  * the number of bindings in the shader.
  */
 void	create_descriptor_set_layout(void)
 {
-	VkDescriptorSetLayoutBinding layout_bindings[2];
+	VkDescriptorSetLayoutBinding	layout_bindings[2];
 	VkDescriptorSetLayoutCreateInfo	create_info;
 
 	memset(&layout_bindings, 0, sizeof(layout_bindings));

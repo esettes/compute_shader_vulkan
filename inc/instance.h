@@ -1,11 +1,7 @@
 /**
  * @ Author: Roxana Stancu (esettes)
  * @ Created: 2022/12/03 16:36
- * @ Modified: 2022/12/05 01:07
- * 
- * Allocated data buffers must be bound to a descriptor sent and
- * the ds must be bound to the command buffer. This way Vulkan
- * can give the memory to the shader.
+ * @ Modified: 2022/12/06 12:13
  */
 
 # ifndef INSTANCE_H
