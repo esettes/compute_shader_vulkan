@@ -15,7 +15,8 @@ layout ( binding = 1 ) buffer output_buffer
 /* Each localinvocationindex has its x, y and z members */
 void main()
 {
+	/** Basic calculation
 	uint index = gl_LocalInvocationID.x + gl_WorkGroupID.x * 120;
-	values_out[index] = values_in[index] * 1000.0;
+	values_out[index] = values_in[index] * 1000.0;*/
 
 }
