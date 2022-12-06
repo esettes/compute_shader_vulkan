@@ -1,7 +1,7 @@
 /**
  * @ Author: Roxana Stancu (esettes)
  * @ Created: 2022/12/06 14:20
- * @ Modified: 2022/12/06 20:31
+ * @ Modified: 2022/12/06 21:48
  * 
  * @ Description: Alloc memory in the GPU.
  */
@@ -146,4 +146,53 @@ uint32_t	find_mem_index_by_type(uint32_t allowed_types, VkMemoryPropertyFlags fl
 	}
 	printf("[ERROR] Can't find memory type index.\n");
 	return (0);
+}
+/**
+ * Access GPU memory mapping it to our memory space.
+*/
+/**
+ *  Copies data to input buffer. Maps GPU memory
+ * 
+ * > Mapping wouldn't be possible without VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT
+ * 
+ * > With VK_MEMORY_PROPERTY_HOST_COHERENT_BIT ensures that the data are not
+ * placed in the cache
+ * 
+ * @param data: pointer to data that will be write to input gpu buffer
+ * @param size: data size
+*/
+void	copy_to_input_buffer(void *data, uint32_t size)
+{
+	void	*address; /**< GPU memory region will be set here*/
+
+	if (vkMapMemory(g_logical_device, g_in_buffer_mem, 0, size, 0, &address)
+		!= VK_SUCCESS)
+	{
+		printf("[ERROR] Can't map input buffer memory.\n");
+	}
+	/** copy data to mapped memory */
+	memcpy(address, data, size);
+	/** Unmap memory*/
+	vkUnmapMemory(g_logical_device, g_in_buffer_mem);
+}
+
+/**
+ * Copies data to output buffer. Maps GPU memory
+ * 
+ * @param data: pointer to data that will be write to output gpu buffer
+ * @param size: data size
+*/
+void	copy_from_output_buffer(void *data, uint32_t size)
+{
+	void	*address; /**< GPU memory region will be set here*/
+
+	if (vkMapMemory(g_logical_device, g_out_buffer_mem, 0, size, 0, &address)
+		!= VK_SUCCESS)
+	{
+		printf("[ERROR] Can't map output buffer memory.\n");
+	}
+	/** copy data to mapped memory */
+	memcpy(data, address, size);
+	/** Unmap memory*/
+	vkUnmapMemory(g_logical_device, g_out_buffer_mem);
 }

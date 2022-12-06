@@ -1,7 +1,7 @@
 /**
  * @ Author: Roxana Stancu (esettes)
  * @ Created: 2022/12/02 23:41
- * @ Modified: 2022/12/06 20:38
+ * @ Modified: 2022/12/06 22:49
  * 
  * @ Description: Alloc command buffer in command pool and submit queue. Create
  * descriptor set for buffers.
@@ -65,7 +65,7 @@ void	create_command_buffer(void)
 	the first. */
 	vkCmdBindDescriptorSets(g_command_buffer, VK_PIPELINE_BIND_POINT_COMPUTE,
 		g_pipeline_layout, 0, 1, &g_descriptor_set, 0, NULL);
-	vkCmdDispatch(g_command_buffer, 1, 1, 1);
+	vkCmdDispatch(g_command_buffer, 6, 1, 1);
 	/* End recording */
 	if (vkEndCommandBuffer(g_command_buffer) != VK_SUCCESS)
 	{
@@ -96,6 +96,7 @@ int	compute(void)
 	memset(&submit_info, 0, sizeof(submit_info));
 	submit_info.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
 	/* Array of command buffers handles. Sync tool with fence. */
+	submit_info.commandBufferCount = 1;
 	submit_info.pCommandBuffers = &g_command_buffer;
 	if (vkQueueSubmit(g_compute_queue, 1, &submit_info, fence) != VK_SUCCESS)
 	{
