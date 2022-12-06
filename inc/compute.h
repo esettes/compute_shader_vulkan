@@ -1,7 +1,7 @@
 /**
  * @ Author: Roxana Stancu
  * @ Created: 2022/12/02 23:42
- * @ Modified: 2022/12/05 01:12
+ * @ Modified: 2022/12/06 18:59
  */
 
 # ifndef COMPUTE_H
@@ -11,6 +11,8 @@
 #include <string.h>
 #include "device.h"
 #include "pipeline.h"
+
+extern VkDescriptorSet	g_descriptor_set;
 
 int		compute(void);
 void	create_command_buffer(void);

@@ -1,7 +1,7 @@
 /**
  * @ Author: Roxana Stancu (esettes)
  * @ Created: 2022/12/02 23:41
- * @ Modified: 2022/12/06 14:21
+ * @ Modified: 2022/12/06 17:38
  * 
  * @ Description: Alloc command buffer in command pool and submit queue. Create
  * descriptor set for buffers.
@@ -48,10 +48,8 @@ void	create_command_buffer(void)
 		printf("[ERROR] Command buffer allocation failed\n");
 		return ;
 	}
-	/**
-	 * Record operations that want to be executed
-	 */
-	VkCommandBufferBeginInfo begin_info;
+	
+	VkCommandBufferBeginInfo begin_info; /**< Record operations that want to be execute */
 	
 	memset(&begin_info, 0, sizeof(begin_info));
 	begin_info.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
