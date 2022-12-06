@@ -1,7 +1,7 @@
 /**
  * @ Author: Roxana Stancu (esettes)
  * @ Created: 2022/12/03 02:48
- * @ Modified: 2022/12/06 14:16
+ * @ Modified: 2022/12/06 19:58
  * 
  * @ Description: Open a device, create logical device and allocate execution
  * queues from it.
@@ -25,6 +25,7 @@
 #include <stdio.h>
 #include "device.h"
 #include "instance.h"
+#include "memory.h"
 
 uint32_t			g_comp_queue_family_index;
 VkDevice			g_logical_device = VK_NULL_HANDLE;
@@ -120,6 +121,9 @@ void	destroy_commandpool_logicaldevice(void)
 		vkDestroyCommandPool(g_logical_device, g_compute_command_pool, NULL);
 	if (g_descriptor_pool != VK_NULL_HANDLE)
 		vkDestroyDescriptorPool(g_logical_device, g_descriptor_pool, NULL);
+	/* Snce descriptor sets are allocated from descriptor pool, they're 
+	destroyed together with it */
+	destroy_buffers();
 	if (g_logical_device != VK_NULL_HANDLE)
 		vkDestroyDevice(g_logical_device, NULL);
 }

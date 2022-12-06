@@ -1,7 +1,7 @@
 /**
  * @ Author: Roxana Stancu (esettes)
  * @ Created: 2022/12/06 14:20
- * @ Modified: 2022/12/06 19:37
+ * @ Modified: 2022/12/06 19:57
  * 
  * @ Description: Alloc memory in the GPU.
  */
@@ -41,7 +41,7 @@ VkBuffer	create_and_alloc_buffer(uint32_t size, VkDeviceMemory *device_mem)
 		return (VK_NULL_HANDLE);
 	}
 	/**
-	 * Alloc mem --------------------------------------------------------------
+	 * Alloc mem --------------
 	 */
 	VkMemoryRequirements	mem_requirements;
 	/* gives required size of the mem block and allows mem types for buffer */
@@ -72,10 +72,13 @@ VkBuffer	create_and_alloc_buffer(uint32_t size, VkDeviceMemory *device_mem)
 		return (VK_NULL_HANDLE);
 	}
 }
-
 /**
  * Buffer handle and memory region.
-*/
+ * Creates GPU memory buffers  and writes it to the descriptor set.
+ * 
+ * @param in_size: input buffer size
+ * @param out_size: output buffer size
+ */
 void	create_buffers(uint32_t in_size, uint32_t out_size)
 {
 	g_in_buffer = create_and_alloc_buffer(in_size, &g_in_buffer_mem);
@@ -89,6 +92,9 @@ void	create_buffers(uint32_t in_size, uint32_t out_size)
 	descriptor_buff_info[0].range = in_size; /**< want to use as much space as
 											allocated. Range = how many bytes 
 											should the buff contain. */
+	descriptor_buff_info[1].buffer = g_out_buffer;
+	descriptor_buff_info[1].offset = 0;
+	descriptor_buff_info[1].range = out_size;
 	/** Descriptor set*/
 	VkWriteDescriptorSet	write_descriptor_set;
 	memset(&write_descriptor_set, 0, sizeof(write_descriptor_set));
@@ -98,12 +104,19 @@ void	create_buffers(uint32_t in_size, uint32_t out_size)
 	write_descriptor_set.descriptorCount = 2; /**< num of buffs want to bind with DS,
 											input - output */
 	write_descriptor_set.descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
-	write_descriptor_set
+	write_descriptor_set.pBufferInfo = descriptor_buff_info;
 	/* It can bind multiple buffer types to multiple descriptor sets,
 	so each operation must be specified */
 	vkUpdateDescriptorSets(g_logical_device, 1, &write_descriptor_set, 0, NULL);
 }
 
+void	destroy_buffers(void)
+{
+	vkDestroyBuffer(g_logical_device, g_in_buffer, NULL);
+	vkDestroyBuffer(g_logical_device, g_out_buffer, NULL);
+	vkFreeMemory(g_logical_device, g_in_buffer_mem, NULL);
+	vkFreeMemory(g_logical_device, g_out_buffer_mem, NULL);
+}
 /**
  * Obtain all memory types and properties, parses all of types that fit
  * into 'allowed_types'.
