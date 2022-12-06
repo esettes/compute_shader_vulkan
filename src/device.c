@@ -1,7 +1,7 @@
 /**
  * @ Author: Roxana Stancu (esettes)
  * @ Created: 2022/12/03 02:48
- * @ Modified: 2022/12/06 20:41
+ * @ Modified: 2022/12/06 20:45
  * 
  * @ Description: Open a device, create logical device and allocate execution
  * queues from it.
@@ -118,7 +118,6 @@ void	create_descriptor_pool(void)
 		printf("[ERROR] Can't create descriptor pool.\n");
 		return ;
 	}
-	
 }
 
 void	destroy_commandpool_logicaldevice(void)

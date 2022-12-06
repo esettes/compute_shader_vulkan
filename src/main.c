@@ -1,7 +1,7 @@
 /**
  * @ Author: Roxana Stancu (esettes)
  * @ Created: 2022/12/02 23:40
- * @ Modified: 2022/12/06 20:02
+ * @ Modified: 2022/12/06 20:45
  */
 
 #include "compute.h"
@@ -10,6 +10,7 @@
 #include "pipeline.h"
 #include "memory.h"
 
+/* Need to map GPUs memory to our memory */
 /* Buffers mirrors */
 uint32_t	g_in_data[1000];
 float		g_out_data[1000];
@@ -31,7 +32,3 @@ int	main(int argc, char **argv)
 	(void)argc;
 	return (0);
 }
-
-
-
-// Bind buffer handles with the descriptor set
