@@ -1,7 +1,7 @@
 /**
  * @ Author: Roxana Stancu (esettes)
  * @ Created: 2022/12/02 23:41
- * @ Modified: 2022/12/07 23:20
+ * @ Modified: 2022/12/07 23:42
  * 
  * @ Description: Alloc command buffer in command pool and submit queue. Create
  * descriptor set for buffers.
@@ -74,7 +74,6 @@ void	create_command_buffer(void)
 		return ;
 	}
 }
-
 /**
  * Submits command buffer to queue.
  * 
