@@ -1,7 +1,7 @@
 /**
  * @ Author: Roxana Stancu (esettes)
  * @ Created: 2022/12/03 16:36
- * @ Modified: 2022/12/06 12:13
+ * @ Modified: 2022/12/07 19:13
  */
 
 # ifndef INSTANCE_H
@@ -10,7 +10,7 @@
 #include <vulkan/vulkan.h>
 
 #ifndef DEBUG
-#define DEBUG 1
+#define DEBUG 0
 #endif
 
 extern VkInstance		g_instance;

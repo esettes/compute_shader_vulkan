@@ -1,7 +1,7 @@
 /**
  * @ Author: Roxana Stancu (esettes)
  * @ Created: 2022/12/03 16:29
- * @ Modified: 2022/12/06 22:13
+ * @ Modified: 2022/12/07 19:13
  * 
  * @ Description: Obtain the physical device.
  *
@@ -48,11 +48,10 @@ void	create_instance(void)
 	memset(&instance_info, 0, sizeof(instance_info));
 	instance_info.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
 	//#if TEMP_DISABLED
-	/*until I figure out how to do it
-	#if DEBUG == 1*/
+	#if DEBUG == 1
 	
 	check_validation_layer_support();
-	/*#endif*/
+	#endif
 	instance_info.ppEnabledLayerNames = layers;
 	instance_info.enabledLayerCount = 1;
 	//#endif

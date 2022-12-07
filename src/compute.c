@@ -1,7 +1,7 @@
 /**
  * @ Author: Roxana Stancu (esettes)
  * @ Created: 2022/12/02 23:41
- * @ Modified: 2022/12/06 22:49
+ * @ Modified: 2022/12/07 23:20
  * 
  * @ Description: Alloc command buffer in command pool and submit queue. Create
  * descriptor set for buffers.
@@ -65,7 +65,8 @@ void	create_command_buffer(void)
 	the first. */
 	vkCmdBindDescriptorSets(g_command_buffer, VK_PIPELINE_BIND_POINT_COMPUTE,
 		g_pipeline_layout, 0, 1, &g_descriptor_set, 0, NULL);
-	vkCmdDispatch(g_command_buffer, 6, 1, 1);
+	/** Relationated with the shader dimensions */
+	vkCmdDispatch(g_command_buffer, 1000, 1, 1);
 	/* End recording */
 	if (vkEndCommandBuffer(g_command_buffer) != VK_SUCCESS)
 	{
@@ -109,10 +110,10 @@ int	compute(void)
 	{
 		printf("[ERROR] Waiting for fence failed.\n");
 	}
-	else
-	{
-		printf("[INFO] Waiting for fence success.\n");
-	}
+	// else
+	// {
+	// 	printf("[INFO] Waiting for fence success.\n");
+	// }
 	vkDestroyFence(g_logical_device, fence, NULL);
 	return (0);
 }

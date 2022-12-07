@@ -1,6 +1,6 @@
 #version 450
 
-layout ( local_size_x = 120, local_size_y = 1, local_size_z = 1 ) in;
+layout ( local_size_x = 1000, local_size_y = 1, local_size_z = 1 ) in;
 
 layout ( binding = 0 ) buffer input_buffer
 {
@@ -9,7 +9,9 @@ layout ( binding = 0 ) buffer input_buffer
 
 layout ( binding = 1 ) buffer output_buffer
 {
-	float values_out[];
+	uint values_out[1000][1000];
+	//uint values_out1[500][500];
+	//uint values_out2[500][500];
 };
 
 /* Each localinvocationindex has its x, y and z members */
@@ -18,5 +20,22 @@ void main()
 	/** Basic calculation
 	uint index = gl_LocalInvocationID.x + gl_WorkGroupID.x * 120;
 	values_out[index] = values_in[index] * 1000.0;*/
+	float r = gl_WorkGroupID.x / 500.0 - 1.0f;
+	float i = gl_LocalInvocationID.x / 500.0 - 1.0f;
+
+	uint count = 0;
+	/** Local size X dimension setted to 1000, so shader will be called with
+	the local invocation index for all values from 0 to 1000, so is not
+	necessary loop over columns. */
+	while (((r * r + i * i) < 4.0f) && (count < 63))
+    {
+        float temp = r * r - i * i + 0.17;
+        i = 4 * r * i + 0.57;
+        r = temp;
+		count++;
+	}
+	/** 2 bits shifted = red color */
+	values_out[gl_WorkGroupID.x][gl_LocalInvocationID.x] = (count << 2) | 0xff000000;
+
 
 }

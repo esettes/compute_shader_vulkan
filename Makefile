@@ -49,6 +49,7 @@ obj:
 
 clean: 
 	@rm -f $(OBJ_DIR)*.o
+	@rm -f *.raw
 	@echo "$(BWHITE)Clean objs $(G_OK)"
 
 fclean: clean

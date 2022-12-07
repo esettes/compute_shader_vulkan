@@ -1,7 +1,7 @@
 /**
  * @ Author: Roxana Stancu (esettes)
  * @ Created: 2022/12/03 02:48
- * @ Modified: 2022/12/06 20:45
+ * @ Modified: 2022/12/07 22:50
  * 
  * @ Description: Open a device, create logical device and allocate execution
  * queues from it.
@@ -49,9 +49,6 @@ void	create_device_and_compute_queue(void)
 	{
 		g_comp_queue_family_index++;
 	}
-	/**
-	 * If the suitable queue family is not found, print error.
-	*/
 	if (g_comp_queue_family_index == f_count)
 	{
 		printf("[ERROR] Compute queue not found\n");

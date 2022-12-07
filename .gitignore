@@ -1,2 +1,5 @@
 .vscode
 *.o
+gfxrecon_*
+imgtest*
+*.raw
