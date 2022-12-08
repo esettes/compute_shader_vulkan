@@ -1,6 +1,6 @@
 # Compute shader with Vulkan
 
-### Initialization of a Vulkan program to execute a compute shader.
+Initialization of a Vulkan program to execute a compute shader.
 
 ## Contents
 - [Introduction](#Introduction)
@@ -34,5 +34,5 @@ Validator layers are included here --
 
 Enumerate all physical devices from the instance. `vkGetPhysicalDeviceProperties` allows to see significant information about each device.
 
-3. 
+### 3. 
 
