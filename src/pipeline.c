@@ -1,7 +1,7 @@
 /**
  * @ Author: Roxana Stancu (esettes)
  * @ Created: 2022/12/04 01:38
- * @ Modified: 2022/12/06 14:18
+ * @ Modified: 2022/12/09 04:25
  * 
  * @ Description: Defining process of shader execution. Create pipeline; shader
  * and layout handles
@@ -15,43 +15,60 @@
 #include "pipeline.h"
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
 
 VkPipeline				g_pipeline = VK_NULL_HANDLE;
+VkShaderModule			g_shader_module = VK_NULL_HANDLE;
 VkPipelineLayout		g_pipeline_layout = VK_NULL_HANDLE;
 VkDescriptorSetLayout	g_descriptor_set_layout = VK_NULL_HANDLE;
 
-VkShaderModule create_compute_shader(void)
+static size_t	get_file_size(FILE *f)
 {
-	uint8_t	shader_data[20000];
+	size_t	size;
+	size_t	curr_pos = ftell(f);
+	
+	fseek(f, 0, SEEK_END);
+	size = ftell(f);
+	fseek(f, curr_pos, SEEK_SET);
+	return (size);
+}
+
+void	create_compute_shader(void)
+{
 	FILE	*f = fopen("./src/shader/bin/shader.spv","rb");
 
 	if(!f)
 	{
 		printf("[Error] Can't open shader file.\n");
-		return (VK_NULL_HANDLE);
+		return ;
 	}
-	/* Read file contents to th prepared buffer and get its size 
-	This tries to load as much data to buffer as buffer size and 
-	returns actual number of bytes read. */
-	size_t size = fread(shader_data, 1, sizeof(shader_data), f);
+	size_t size = get_file_size(f);
+	const uint32_t *shader_data = (const uint32_t *)calloc(size + 1, 1);
+
+	if (!shader_data)
+	{
+		printf("[Error] Out of memory when reading shader bin.\n");
+		fclose(f);
+		f = NULL;
+		return ;
+	}
+	fread((void *)shader_data, 1, size, f);
 	fclose(f);
+	f = NULL;
+	
 	/* Put the binary data to structure */
 	VkShaderModuleCreateInfo	create_info;
 	
 	memset(&create_info, 0, sizeof(create_info));
 	create_info.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
 	create_info.codeSize = size;
-	create_info.pCode = (uint32_t*)shader_data;
-	
-	VkShaderModule	handle;
-
-	if (vkCreateShaderModule(g_logical_device, &create_info, NULL, &handle)
+	create_info.pCode = (uint32_t *)shader_data;
+	if (vkCreateShaderModule(g_logical_device, &create_info, NULL, &g_shader_module)
 		!= VK_SUCCESS)
 	{
 		printf("[Error] Can't create shader module.\n");
-		return (VK_NULL_HANDLE);
+		return ;
 	}
-	return (handle);
 }
 /**
  * Specifies the types of buffers used by the shader/s.
@@ -109,6 +126,7 @@ void	create_pipeline_layout(void)
 void	create_pipeline(void)
 {
 	create_pipeline_layout();
+	create_compute_shader();
 	VkComputePipelineCreateInfo pipeline_info;
 
 	memset(&pipeline_info, 0, sizeof(pipeline_info));
@@ -118,7 +136,7 @@ void	create_pipeline(void)
 	pipeline_info.stage.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
 	pipeline_info.stage.stage = VK_SHADER_STAGE_COMPUTE_BIT;
 	pipeline_info.stage.pName = "main";
-	pipeline_info.stage.module = create_compute_shader();
+	pipeline_info.stage.module = g_shader_module;
 	if (pipeline_info.stage.module == VK_NULL_HANDLE)
 	{
 		printf("[Error] Pipeline stage module is NULL.\n");
@@ -139,16 +157,21 @@ void	destroy_pipeline(void)
 	if (g_pipeline_layout != VK_NULL_HANDLE)
 	{
 		vkDestroyPipelineLayout(g_logical_device, g_pipeline_layout, NULL);
-		/*g_pipeline_layout = VK_NULL_HANDLE;*/
 	}
 	if (g_descriptor_set_layout != VK_NULL_HANDLE)
 	{
 		vkDestroyDescriptorSetLayout(g_logical_device, g_descriptor_set_layout, NULL);
-		/*g_descriptor_set_layout = VK_NULL_HANDLE;*/
 	}
 	if (g_pipeline != VK_NULL_HANDLE)
 	{
 		vkDestroyPipeline(g_logical_device, g_pipeline, NULL);
-		/*g_pipeline = VK_NULL_HANDLE;*/
+	}
+}
+
+void	destroy_shader_module(void)
+{
+	if (g_shader_module != VK_NULL_HANDLE)
+	{
+		vkDestroyShaderModule(g_logical_device, g_shader_module, NULL);
 	}
 }

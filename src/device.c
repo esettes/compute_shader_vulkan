@@ -1,7 +1,7 @@
 /**
  * @ Author: Roxana Stancu (esettes)
  * @ Created: 2022/12/03 02:48
- * @ Modified: 2022/12/07 23:41
+ * @ Modified: 2022/12/09 04:19
  * 
  * @ Description: Open a device, create logical device and allocate execution
  * queues from it.
@@ -23,11 +23,12 @@
 
 #include <string.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include "device.h"
 #include "instance.h"
 #include "memory.h"
 
-uint32_t			g_comp_queue_family_index;
+uint32_t			g_compute_family_index;
 VkDevice			g_logical_device = VK_NULL_HANDLE;
 VkQueue				g_compute_queue = VK_NULL_HANDLE;
 VkCommandPool		g_compute_command_pool = VK_NULL_HANDLE;
@@ -35,34 +36,37 @@ VkDescriptorPool	g_descriptor_pool = VK_NULL_HANDLE;
 
 void	create_device_and_compute_queue(void)
 {
-	VkQueueFamilyProperties	families[100];
-	uint32_t				f_count = 100;
-
-	/* * * * * *		Get which queue we need			* * * * * */
-	vkGetPhysicalDeviceQueueFamilyProperties(g_physical_device, &f_count,
-		families);
-	printf("Found %u queue families\n", f_count);
-	g_comp_queue_family_index = 0;
-	while ((g_comp_queue_family_index < f_count) 
-		&& ((families[g_comp_queue_family_index].queueFlags
+	uint32_t				count = 0;
+	VkQueueFamilyProperties	*families;
+	
+	/** Get which queue we need */
+	vkGetPhysicalDeviceQueueFamilyProperties(g_physical_device, &count, NULL);
+	families = malloc(sizeof(VkQueueFamilyProperties) * count);
+	vkGetPhysicalDeviceQueueFamilyProperties(g_physical_device, &count, families);
+	printf("Found %u queue families\n", count);
+	g_compute_family_index = 0;
+	while ((g_compute_family_index < count)
+		&& ((families[g_compute_family_index].queueFlags
 		& VK_QUEUE_COMPUTE_BIT) == 0))
 	{
-		g_comp_queue_family_index++;
+		g_compute_family_index++;
 	}
-	if (g_comp_queue_family_index == f_count)
+	free(families);
+	if (g_compute_family_index == count)
 	{
 		printf("[ERROR] Compute queue not found\n");
 	}
-	/* * * *	Open the device; create the logical device	* * * * * */
+	/** Open the device; create the logical device */
 	VkDeviceCreateInfo		device_create_info;
 	VkDeviceQueueCreateInfo	queue_create_info;
 	float					prior = 1.0f;
 
 	memset(&queue_create_info, 0, sizeof(queue_create_info));
 	queue_create_info.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
-	queue_create_info.queueFamilyIndex = g_comp_queue_family_index;
+	queue_create_info.queueFamilyIndex = g_compute_family_index;
 	queue_create_info.queueCount = 1;
 	queue_create_info.pQueuePriorities = &prior;
+
 	memset(&device_create_info, 0, sizeof(device_create_info));
 	device_create_info.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
 	device_create_info.pQueueCreateInfos = &queue_create_info;
@@ -73,8 +77,8 @@ void	create_device_and_compute_queue(void)
 		printf("[ERROR] Logical device creation failure\n");
 		return ;
 	}
-	/* * * *	Get the compute queue handle	* * * * * */
-	vkGetDeviceQueue(g_logical_device, g_comp_queue_family_index, 0,
+	/** Get the compute queue handle */
+	vkGetDeviceQueue(g_logical_device, g_compute_family_index, 0,
 		&g_compute_queue);
 }
 /**
@@ -86,7 +90,7 @@ void	create_command_pool(void)
 
 	memset(&cmd_pool_create_info, 0, sizeof(cmd_pool_create_info));
 	cmd_pool_create_info.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
-	cmd_pool_create_info.queueFamilyIndex = g_comp_queue_family_index;
+	cmd_pool_create_info.queueFamilyIndex = g_compute_family_index;
 	if (vkCreateCommandPool(g_logical_device, &cmd_pool_create_info, NULL,
 		&g_compute_command_pool) != VK_SUCCESS)
 	{
@@ -103,6 +107,7 @@ void	create_descriptor_pool(void)
 	memset(&pool_sizes, 0, sizeof(pool_sizes));
 	pool_sizes.type = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
 	pool_sizes.descriptorCount = 2;
+
 	memset(&create_info, 0, sizeof(create_info));
 	create_info.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
 	create_info.maxSets = 1;

@@ -1,5 +1,7 @@
 #version 450
 
+/* letting vulkan know that we want our compute shader to be executed in 
+groups of XXX elements at a time*/
 layout ( local_size_x = 1000, local_size_y = 1, local_size_z = 1 ) in;
 
 layout ( binding = 0 ) buffer input_buffer
@@ -13,8 +15,9 @@ layout ( binding = 1 ) buffer output_buffer
 	//uint values_out1[500][500];
 	//uint values_out2[500][500];
 };
-
-/* Each localinvocationindex has its x, y and z members */
+/* GlobalInvocationID = which element isusing in execution*/
+/* LocalinvocationID = index in a workgroup */
+/* WorkGroupID = whichworkgruoup is executing*/
 void main()
 {
 	/** Basic calculation

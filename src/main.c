@@ -1,7 +1,7 @@
 /**
  * @ Author: Roxana Stancu (esettes)
  * @ Created: 2022/12/02 23:40
- * @ Modified: 2022/12/07 23:42
+ * @ Modified: 2022/12/09 04:26
  */
 
 #include "compute.h"
@@ -74,7 +74,7 @@ int	main(int argc, char **argv)
 	start = get_time() - start;
 	printf("CPU time: %ums.\n", start);
 
-	FILE *f = fopen("./img/raw/fractal_cpu_1000x100.raw", "wb");
+	FILE *f = fopen("./img/raw/fractal_cpu_.raw", "wb");
 	fwrite(g_out_data, sizeof(g_out_data), 1, f);
 	fclose(f);
 
@@ -85,11 +85,12 @@ int	main(int argc, char **argv)
 
 	copy_from_output_buffer(g_out_data, sizeof(g_out_data));
 	
-	f = fopen("./img/raw/fractal_gpu_1000x100.raw", "wb");
+	f = fopen("./img/raw/fractal_gpu_.raw", "wb");
 	fwrite(g_out_data, sizeof(g_out_data), 1, f);
 	fclose(f);
 
 	destroy_pipeline();
+	destroy_shader_module();
 	destroy_commandpool_logicaldevice();
 	(void)argv;
 	(void)argc;
